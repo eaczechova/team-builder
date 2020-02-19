@@ -1,23 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Form from './components/Form';
 
 function App() {
-	const [newTeamMember, setNewTeamMember] = useState({
-		name: '',
-		email: '',
-		role: ''
-	});
-
-	const handleChanges = event => {
-		setNewTeamMember({
-			...newTeamMember,
-			[event.target.name]: event.target.value
-		});
-	};
-
 	const [list, setList] = useState([
-		{ name: 'ewa czech', email: 'ewa.czech@hotmail.com', role: 'student' }
+		{
+			id: 0,
+			name: 'ewa czech',
+			email: 'ewa.czech@hotmail.com',
+			role: 'student'
+		}
 	]);
 
 	const addNewMember = member => {
@@ -25,19 +17,20 @@ function App() {
 		setList([...list, newMember]);
 	};
 
-	const submitForm = event => {
-		event.preventDefault();
-		addNewMember(newTeamMember);
-		setNewTeamMember({ name: '', email: '', role: '' });
-	};
+	const [memberToEdit, setMemberToEdit] = useState({});
 
 	return (
 		<div className="App">
-			<Form addNewMember={addNewMember} />
+			<Form
+				addNewMember={addNewMember}
+				memberToEdit={memberToEdit}
+				list={list}
+				setList={setList}
+			/>
 			<ul className="list">
-				{list.map(el => {
+				{list.map((el, index) => {
 					return (
-						<li>
+						<li key={index}>
 							<p>
 								<span>Name:</span> {el.name}
 							</p>
@@ -47,6 +40,7 @@ function App() {
 							<p>
 								<span>Role:</span> {el.role}
 							</p>
+							<button onClick={() => setMemberToEdit(el)}>Edit</button>
 						</li>
 					);
 				})}

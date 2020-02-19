@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../App.css';
 
 function Form(props) {
 	const [newTeamMember, setNewTeamMember] = useState({
+		id: '',
 		name: '',
 		email: '',
 		role: ''
 	});
 
 	const handleChanges = event => {
+		newTeamMember.id = props.list.length;
 		setNewTeamMember({
 			...newTeamMember,
 			[event.target.name]: event.target.value.toLowerCase()
@@ -16,9 +18,23 @@ function Form(props) {
 	};
 	const submitForm = event => {
 		event.preventDefault();
-		props.addNewMember(newTeamMember);
-		setNewTeamMember({ name: '', email: '', role: '' });
+		if (props.memberToEdit.name !== undefined) {
+			var tempList = props.list.map(element =>
+				element.id == newTeamMember.id ? { ...element, ...newTeamMember } : element
+			);
+			props.setList(tempList);
+		} else {
+			newTeamMember.id = props.list.length;
+			props.addNewMember(newTeamMember);
+		}
+
+		setNewTeamMember({ id: '', name: '', email: '', role: '' });
 	};
+
+	useEffect(() => {
+		setNewTeamMember(props.memberToEdit);
+	}, [props.memberToEdit]);
+
 	return (
 		<div>
 			<h1>New Team Member Form</h1>
